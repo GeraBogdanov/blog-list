@@ -1,0 +1,9 @@
+unknownEndpointPOST http://localhost:3003/api/blogs HTTP/1.1
+content-type:application/json
+
+{
+  "title": "My Title",
+  "author": "German",
+  "url": "http://example.com",
+  "likes": 5
+}
