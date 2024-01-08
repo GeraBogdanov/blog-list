@@ -25,10 +25,7 @@ const favoriteBlog = (blogs) => {
 const mostBlogs = (blogs) => {
   let result = blogs.reduce((authors, blog) => {
     authors[blog.author] = authors[blog.author] || 0
-    console.log(authors)
-
     authors[blog.author] = Number(authors[blog.author]) + 1
-    console.log(authors)
     return authors
   },{})
 
@@ -47,9 +44,35 @@ const mostBlogs = (blogs) => {
   return obj
 }
 
+const mostLikes = (blogs) => {
+  let result = blogs.reduce((authors, blog) => {
+    authors[blog.author] = authors[blog.author] || 0
+    console.log(authors)
+
+    authors[blog.author] = Number(authors[blog.author]) + blog.likes
+    console.log(authors)
+    return authors
+  },{})
+
+  let obj = {
+    author: '',
+    likes: 0
+  }
+
+  for(let i in result) {
+    if (obj.likes < result[i]) {
+      obj.author = i
+      obj.likes = result[i]
+    }
+  }
+  console.log(obj)
+  return obj
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes,
 }
