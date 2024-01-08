@@ -22,8 +22,34 @@ const favoriteBlog = (blogs) => {
   return blog
 }
 
+const mostBlogs = (blogs) => {
+  let result = blogs.reduce((authors, blog) => {
+    authors[blog.author] = authors[blog.author] || 0
+    console.log(authors)
+
+    authors[blog.author] = Number(authors[blog.author]) + 1
+    console.log(authors)
+    return authors
+  },{})
+
+  let obj = {
+    author: '',
+    blogs: 0
+  }
+
+  for(let i in result) {
+    if (obj.blogs < result[i]) {
+      obj.author = i
+      obj.blogs = result[i]
+    }
+  }
+  console.log(obj)
+  return obj
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
