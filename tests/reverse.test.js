@@ -89,7 +89,7 @@ describe('total likes', () => {
 
 })
 
-describe('favourite Blog', () => {
+describe('favourite blog', () => {
   const listWithMultipleBlogs = [
     {
       _id: '5a422a851b54a676234d17f7',
@@ -141,16 +141,14 @@ describe('favourite Blog', () => {
     }
   ]
 
-  const bestBlog = {
+  const compareBlog = {
     title: 'Canonical string reduction',
     author: 'Edsger W. Dijkstra',
     likes: 12,
   }
 
-  test.only('best Blog', () => {
+  test('favourite blog', () => {
     const result = listHelper.favoriteBlog(listWithMultipleBlogs)
-    console.log(result)
-    console.log(bestBlog)
-    expect(result).toEqual(bestBlog)
+    expect(result).toEqual(compareBlog)
   })
 })
