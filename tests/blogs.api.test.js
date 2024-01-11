@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
@@ -74,6 +74,18 @@ test('verifies if likes props is note defined set to 0', async () => {
   const blogAtEnd = await helper.blogsInDb()
   const result = blogAtEnd[blogAtEnd.length - 1]
   expect(result.likes).toBe(0)
+})
+
+test.only('test code 400 bad request', async () => {
+  const newBlog = {
+    // title: 'Example blog',
+    author: 'Gary Crosby',
+    url: 'www.example.com',
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 })
 
 afterAll(async () => {

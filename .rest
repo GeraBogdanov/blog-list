@@ -4,7 +4,7 @@ content-type:application/json
 {
   "title": "My Title",
   "author": "German",
-  "url": "http://example.com",
+  "url": "http://example.com", 
   "likes": 5
 }
 
