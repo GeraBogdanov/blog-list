@@ -76,7 +76,7 @@ test('verifies if likes props is note defined set to 0', async () => {
   expect(result.likes).toBe(0)
 })
 
-test.only('test code 400 bad request', async () => {
+test('test code 400 bad request', async () => {
   const newBlog = {
     // title: 'Example blog',
     author: 'Gary Crosby',
@@ -86,6 +86,23 @@ test.only('test code 400 bad request', async () => {
   await api.post('/api/blogs')
     .send(newBlog)
     .expect(400)
+})
+
+test.only('test delete', async () => {
+  const notesAtStart = await helper.blogsInDb()
+  const noteToDelete = notesAtStart[0]
+
+
+  await api
+    .delete(`/api/blogs/${noteToDelete.id}`)
+    .expect(204)
+
+  const notesAtEnd = await helper.blogsInDb()
+
+  expect(notesAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+  const result = notesAtEnd.map(b => b.id)
+  expect(result).not.toContain(noteToDelete.id)
 })
 
 afterAll(async () => {
