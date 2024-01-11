@@ -54,6 +54,15 @@ test('all blogs are returned', async () => {
 
 })
 
+test.only('identifier of the blog posts is named id', async () => {
+  const response = await api
+    .get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  expect(response.body[0].id).toBeDefined()
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

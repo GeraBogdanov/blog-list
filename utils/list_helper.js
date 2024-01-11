@@ -40,7 +40,6 @@ const mostBlogs = (blogs) => {
       obj.blogs = result[i]
     }
   }
-  console.log(obj)
   return obj
 }
 
@@ -63,7 +62,6 @@ const mostLikes = (blogs) => {
       obj.likes = result[i]
     }
   }
-  console.log(obj)
   return obj
 }
 
