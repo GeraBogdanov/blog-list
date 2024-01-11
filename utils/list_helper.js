@@ -47,10 +47,8 @@ const mostBlogs = (blogs) => {
 const mostLikes = (blogs) => {
   let result = blogs.reduce((authors, blog) => {
     authors[blog.author] = authors[blog.author] || 0
-    console.log(authors)
 
     authors[blog.author] = Number(authors[blog.author]) + blog.likes
-    console.log(authors)
     return authors
   },{})
 
