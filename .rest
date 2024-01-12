@@ -14,3 +14,12 @@ GET http://localhost:3003/api/blogs
 
 ###
 DELETE http://localhost:3003/api/blogs/659485a26eeab3d42c26291e 
+
+###
+
+PATCH http://localhost:3003/api/blogs/65999c621ab05032e1b1ffe1 HTTP/1.1
+content-type: application/json
+
+{  
+  "like": 4
+}

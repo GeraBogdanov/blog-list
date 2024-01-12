@@ -13,8 +13,33 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
+  const result = await Blog.findByIdAndDelete(request.params.id)
+  if(!result) {
+    return response.status(400).json({
+      error: 'info already deleted from server'
+    })
+  }
   response.status(204).end()
+})
+
+blogsRouter.patch('/:id', async (request, response) => {
+  const body = request.body
+
+  if(!Object.prototype.hasOwnProperty.call(body, 'likes')){
+    return response.status(400).json({
+      error:'malformatted data',
+    })
+  }
+
+  const blog = {
+    likes:body.likes
+  }
+  const result = await Blog.findByIdAndUpdate(
+    request.params.id,
+    blog,
+    { new: true, runValidators: true }
+  )
+  response.status(201).json(result)
 })
 
 module.exports = blogsRouter
