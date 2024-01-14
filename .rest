@@ -38,3 +38,17 @@ content-type:application/json
 ###
 
 GET http://localhost:3003/api/users
+
+###
+
+ 
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type:application/json
+
+{
+  "title": "My Title",
+  "author": "German",
+  "url": "http://example.com", 
+  "likes": 5,
+  "userId": "65a2a79c4dd1675ef2e99064"
+}
