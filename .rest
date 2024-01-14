@@ -1,5 +1,6 @@
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type:application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
 
 {
   "title": "My Title",
@@ -41,7 +42,6 @@ GET http://localhost:3003/api/users
 
 ###
 
- 
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type:application/json
 
@@ -58,6 +58,17 @@ content-type:application/json
 POST http://localhost:3003/api/login HTTP/1.1
 content-type:application/json
 
+{
+  "username": "exe",
+  "name": "examplename",
+  "password": "pass" 
+}
+
+###
+
+POST http://localhost:3003/api/login HTTP/1.1
+content-type:application/json
+Authorization: 
 {
   "username": "exe",
   "name": "examplename",
