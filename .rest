@@ -32,7 +32,7 @@ content-type:application/json
 {
   "username": "exe",
   "name": "examplename",
-  "password": "pa" 
+  "password": "pass" 
 }
 
 ###
@@ -51,4 +51,15 @@ content-type:application/json
   "url": "http://example.com", 
   "likes": 5,
   "userId": "65a2a79c4dd1675ef2e99064"
+}
+
+###
+
+POST http://localhost:3003/api/login HTTP/1.1
+content-type:application/json
+
+{
+  "username": "exe",
+  "name": "examplename",
+  "password": "pass" 
 }
