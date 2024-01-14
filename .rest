@@ -23,3 +23,18 @@ content-type: application/json
 {  
   "like": 4
 }
+
+###
+
+POST http://localhost:3003/api/users HTTP/1.1
+content-type:application/json
+
+{
+  "username": "example",
+  "name": "examplename",
+  "password": "password"
+}
+
+###
+
+GET http://localhost:3003/api/users

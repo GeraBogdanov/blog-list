@@ -3,7 +3,9 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('../utils/list_helper')
+const bcrypt = require('bcrypt')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -158,6 +160,62 @@ describe('note update', () => {
       .patch(`/api/blogs/${noteToUpdate.id}`)
       .send(valueWithWrongKey)
       .expect(400)
+  })
+})
+
+
+describe('when there is initially one user in db', () => {
+
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('secret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'Gary',
+      name: 'Car',
+      password: 'sala',
+    }
+
+    await api
+      .post('/api/users')
+      .save(newUser)
+      .expected(201)
+      .expected('Content-Type', /aaplication\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
+
+  test.only('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'sala',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('expected `username` to be unique')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
   })
 })
 
