@@ -3,10 +3,8 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-
-
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
@@ -38,6 +36,28 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+  if(!decodedToken.id) {
+    return response.status(401).json({
+      error: 'token invalid'
+    })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+
+  if(!blog){
+    return response.status(400).json({
+      error: 'info laready deleted from server'
+    })
+  }
+
+  if(!blog.user.toString() === decodedToken.id) {
+    return response.status(400).json({
+      error: 'you dont have access to this blog'
+    })
+  }
+
   const result = await Blog.findByIdAndDelete(request.params.id)
   if(!result) {
     return response.status(400).json({

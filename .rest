@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type:application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImV4ZGZnZWFjIiwiaWQiOiI2NWE0MWYxNGIzMmE0OGE0MTEyZmEzMWQiLCJpYXQiOjE3MDUyNTQ3MDV9.4jiLn2LaHhN1eEe_D2cEVslAUep9txe0g2PpZc9md3M
 
 {
   "title": "My Title",
@@ -14,7 +14,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
 GET http://localhost:3003/api/blogs
 
 ###
-DELETE http://localhost:3003/api/blogs/659485a26eeab3d42c26291e 
+DELETE http://localhost:3003/api/blogs/65a42633b65125bdeffaa7fe 
+content-type:application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImV4ZGZnZWFjIiwiaWQiOiI2NWE0MWYxNGIzMmE0OGE0MTEyZmEzMWQiLCJpYXQiOjE3MDUyNTQ3MDV9.4jiLn2LaHhN1eEe_D2cEVslAUep9txe0g2PpZc9md3M
+
 
 ###
 
@@ -31,7 +34,7 @@ POST http://localhost:3003/api/users HTTP/1.1
 content-type:application/json
 
 {
-  "username": "exeac",
+  "username": "exdfgeac",
   "name": "examplename",
   "password": "pass" 
 }
@@ -59,7 +62,7 @@ POST http://localhost:3003/api/login HTTP/1.1
 content-type:application/json
 
 {
-  "username": "exeac",
+  "username": "exdfgeac",
   "name": "examplename",
   "password": "pass" 
 }
