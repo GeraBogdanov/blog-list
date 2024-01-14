@@ -34,6 +34,8 @@ const tokenExtractor = (request, response, next) => {
   // return null
 }
 
+const userExtractor = (request, response, next) => {}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,

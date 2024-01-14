@@ -44,15 +44,17 @@ blogsRouter.delete('/:id', async (request, response) => {
     })
   }
 
+  const user = await User.findById(decodedToken.id)
+
   const blog = await Blog.findById(request.params.id)
 
   if(!blog){
     return response.status(400).json({
-      error: 'info laready deleted from server'
+      error: 'info already deleted from server'
     })
   }
 
-  if(!blog.user.toString() === decodedToken.id) {
+  if(!blog.user.toString() === user.id) {
     return response.status(400).json({
       error: 'you dont have access to this blog'
     })
@@ -64,7 +66,15 @@ blogsRouter.delete('/:id', async (request, response) => {
       error: 'info already deleted from server'
     })
   }
-  response.status(204).end()
+  console.log(user.blogs)
+  console.log(request.params.id)
+  user.blogs = user.blogs.filter(el => {
+    console.log(el.toString(), '  ', request.params.id)
+    return el.toString() !== request.params.id.toString() })
+  console.log(user.blogs)
+  await user.save()
+
+  response.status(201).json()
 })
 
 blogsRouter.patch('/:id', async (request, response) => {
