@@ -3,11 +3,21 @@ const User = require('../models/user')
 
 const initialBlogs = [
   {
+    _id: '65a452d7e04b41263b79c3a8',
+    title: 'My Title',
+    author: 'German',
+    url: 'http://example.com',
+    likes: 5,
+    user: '65a2a79c4dd1675ef2e99064',
+    __v: 0
+  },
+  {
     _id: '5a422a851b54a676234d17f7',
     title: 'React patterns',
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 7,
+    user: '65a2a79c4dd1675ef2e99064',
     __v: 0
   },
   {
@@ -16,6 +26,7 @@ const initialBlogs = [
     author: 'Edsger W. Dijkstra',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
+    user: '65a2a79c4dd1675ef2e99064',
     __v: 0
   },
   {
@@ -24,7 +35,41 @@ const initialBlogs = [
     author: 'Edsger W. Dijkstra',
     url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12,
+    user: '65a2a8264dd1675ef2e99066',
     __v: 0
+  }
+]
+
+const initialUsers = [
+  {
+    _id: '65a3fae34642be1138bf5e30',
+    username: 'Gary',
+    name: 'examplename',
+    passwordHash: '$2b$10$JAUttRVU5W.JUYOJWIbmzex6ZsyLi8MVRGttrihE6E1x3XkI7BdnG',
+    blogs: [],
+    __v: 0
+  },
+  {
+    _id: '65a2a8264dd1675ef2e99066',
+    username: 'Peter',
+    name: 'examplename',
+    passwordHash: '$2b$10$sGO92EoXvO.T9foB/HGFtelA3XKqHrE.bpXvsc44L0LSZq8WvLqvG',
+    blogs: [
+      '5a422b3a1b54a676234d17f9',
+    ],
+    __v: 0
+  },
+  {
+    _id: '65a2a79c4dd1675ef2e99064',
+    username: 'Freddy',
+    name: 'examplename',
+    passwordHash: '$2b$10$.4sGeCV4jNxhkhtFQX5GI.f4EMtpKMYm3Q7wSonoBg/BLMoh15UIG',
+    blogs: [
+      '5a422a851b54a676234d17f7',
+      '5a422aa71b54a676234d17f8',
+      '65a452d7e04b41263b79c3a8',
+    ],
+    __v: 2
   }
 ]
 
@@ -113,4 +158,5 @@ module.exports = {
   blogsInDb,
   usersInDb,
   initialBlogs,
+  initialUsers,
 }

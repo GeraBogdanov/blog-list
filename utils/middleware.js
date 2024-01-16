@@ -28,7 +28,7 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const tokenExtractor = (request, response, next) => {
-  console.log('function: tokenExtraction')
+  // console.log('function: tokenExtraction')
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '')
@@ -38,7 +38,7 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
-  console.log('function: userExtractor')
+  // console.log('function: userExtractor')
   if(!request.token) {
     request.user = null
   } else {

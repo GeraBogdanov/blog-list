@@ -42,7 +42,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     })
   }
 
-  if(!blog.user.toString() === user.id) {
+  if(blog.user.toString() !== user.id) {
     return response.status(400).json({
       error: 'you dont have access to this blog'
     })
@@ -58,7 +58,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   user.blogs = user.blogs.filter(el => el.toString() !== request.params.id.toString())
   await user.save()
 
-  response.status(201).json()
+  response.status(204).json(user)
 })
 
 blogsRouter.patch('/:id', async (request, response) => {

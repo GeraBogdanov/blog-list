@@ -8,12 +8,24 @@ const helper = require('../utils/list_helper')
 const bcrypt = require('bcrypt')
 
 beforeEach(async () => {
+  await User.deleteMany({})
+  let userObject = new User(helper.initialUsers[0])
+  await userObject.save()
+  userObject = new User(helper.initialUsers[1])
+  await userObject.save()
+  userObject = new User(helper.initialUsers[2])
+  await userObject.save()
+})
+
+beforeEach(async () => {
   await Blog.deleteMany({})
   let blogObject = new Blog(helper.initialBlogs[0])
   await blogObject.save()
   blogObject = new Blog(helper.initialBlogs[1])
   await blogObject.save()
   blogObject = new Blog(helper.initialBlogs[2])
+  await blogObject.save()
+  blogObject = new Blog(helper.initialBlogs[3])
   await blogObject.save()
 })
 
@@ -38,8 +50,27 @@ test('identifier of the blog posts is named id', async () => {
 
   expect(response.body[0].id).toBeDefined()
 })
-describe('addititon of a new note', () => {
+describe('addititon of a new blog', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('secret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
   test('a valid blog can be added', async() => {
+
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const newBlog = {
       title: 'Example blog',
       author: 'Gary Crosby',
@@ -49,18 +80,30 @@ describe('addititon of a new note', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${response.body.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const noteAtEnd = await helper.blogsInDb()
-    expect(noteAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    const blogAtEnd = await helper.blogsInDb()
+    expect(blogAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-    const contents = noteAtEnd.map(b => b.title)
+    const contents = blogAtEnd.map(b => b.title)
     expect(contents).toContain('Example blog')
   })
 
-  test('verifies if likes props is note defined set to 0', async () => {
+  test('verifies if likes props is blog defined set to 0', async () => {
+
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const newBlog = {
       title: 'Example blog',
       author: 'Gary Crosby',
@@ -69,6 +112,7 @@ describe('addititon of a new note', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${response.body.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -79,33 +123,96 @@ describe('addititon of a new note', () => {
   })
 
   test('test code 400 bad request', async () => {
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const newBlog = {
     // title: 'Example blog',
       author: 'Gary Crosby',
       url: 'www.example.com',
     }
 
-    await api.post('/api/blogs')
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${response.body.token}`)
       .send(newBlog)
       .expect(400)
   })
 })
 
-describe('deletion of a note', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
-    const notesAtStart = await helper.blogsInDb()
-    const noteToDelete = notesAtStart[0]
+describe('deleting of a blog', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
 
+    const passwordHash = await bcrypt.hash('secret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+  test('succeeds with status code 204 if id is valid', async () => {
+    const usersAtStart = await helper.usersInDb()
+    console.log(usersAtStart)
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const newBlog = {
+      title: 'Example blog',
+      author: 'Gary Crosby',
+      url: 'www.example.com',
+      likes: 10,
+    }
+
+    const createBlogResponse = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtStart = await helper.blogsInDb()
+  
+    let usersAtEnd = await helper.usersInDb()
+    let currentUser = usersAtEnd.filter(user => user.username = response.body.username)
+    console.log(usersAtEnd)
+    console.log(currentUser[0].blogs)
+    
+    let blogsInCurrentUser = currentUser[0].blogs
+    console.log(blogsInCurrentUser)
+    expect(blogsInCurrentUser.toString()).toContain(createBlogResponse.body.id)
     await api
-      .delete(`/api/blogs/${noteToDelete.id}`)
+      .delete(`/api/blogs/${createBlogResponse.body.id}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
       .expect(204)
 
-    const notesAtEnd = await helper.blogsInDb()
+    const blogsAtEnd = await helper.blogsInDb()
 
-    expect(notesAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 
-    const result = notesAtEnd.map(b => b.id)
-    expect(result).not.toContain(noteToDelete.id)
+    const result = blogsAtEnd.map(b => b.id)
+    expect(result).not.toContain(createBlogResponse.body.id)
+
+    usersAtEnd = await helper.usersInDb()
+    currentUser = usersAtEnd.filter(user => user.username = response.body.username)
+    console.log(usersAtEnd)
+    
+    blogsInCurrentUser = currentUser[0].blogs
+    console.log(blogsInCurrentUser)
+    expect
+    expect(blogsInCurrentUser).toHaveLength(0)
   })
 
   test('failed with code 400 if id is valid and not exist', async () => {
@@ -115,9 +222,9 @@ describe('deletion of a note', () => {
       .delete(`/api/blogs/${validId}`)
       .expect(400)
 
-    const notesAtEnd = await helper.blogsInDb()
+    const blogsAtEnd = await helper.blogsInDb()
 
-    expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
 
   test('failed with status code 400 if id is invalid', async () => {
@@ -129,35 +236,35 @@ describe('deletion of a note', () => {
   })
 })
 
-describe('note update', () => {
+describe('blog update', () => {
   test('succeeds with valid data', async() => {
-    const notesAtStart = await helper.blogsInDb()
-    const noteToUpdate =notesAtStart[0]
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate =blogsAtStart[0]
 
     const newValue = {
       likes: 1,
     }
 
     await api
-      .patch(`/api/blogs/${noteToUpdate.id}`)
+      .patch(`/api/blogs/${blogToUpdate.id}`)
       .send(newValue)
       .expect(201)
 
-    const notesAtEnd = await helper.blogsInDb()
-    const result = notesAtEnd[0]
+    const blogsAtEnd = await helper.blogsInDb()
+    const result = blogsAtEnd[0]
     expect(result.likes).toBe(1)
   })
 
   test('failed with wrong key name', async() => {
-    const notesAtStart = await helper.blogsInDb()
-    const noteToUpdate =notesAtStart[0]
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate =blogsAtStart[0]
 
     const valueWithWrongKey = {
       like: 1,
     }
 
     await api
-      .patch(`/api/blogs/${noteToUpdate.id}`)
+      .patch(`/api/blogs/${blogToUpdate.id}`)
       .send(valueWithWrongKey)
       .expect(400)
   })
@@ -256,6 +363,64 @@ describe('when there is initially one user in db', () => {
 
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+})
+
+describe('login in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('secret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+  test('login in db with valid name and password', async () => {
+
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(JSON.stringify(response.body)).toContain('token')
+  })
+
+  test('login in db with invalid name', async () => {
+
+    const user = {
+      username: 'roo',
+      password: 'secret'
+    }
+
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.error).toContain('invalid username or password')
+  })
+
+  test('login in db with invalid password', async () => {
+
+    const user = {
+      username: 'root',
+      password: 'sec'
+    }
+
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.error).toContain('invalid username or password')
   })
 })
 
