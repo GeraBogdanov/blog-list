@@ -150,6 +150,7 @@ describe('addititon of a new blog', () => {
 describe('deleting of a blog', () => {
   beforeEach(async () => {
     await User.deleteMany({})
+    await Blog.deleteMany({})
 
     const passwordHash = await bcrypt.hash('secret', 10)
     const user = new User({ username: 'root', passwordHash })
@@ -184,12 +185,12 @@ describe('deleting of a blog', () => {
       .expect('Content-Type', /application\/json/)
 
     const blogsAtStart = await helper.blogsInDb()
-  
+
     let usersAtEnd = await helper.usersInDb()
     let currentUser = usersAtEnd.filter(user => user.username = response.body.username)
     console.log(usersAtEnd)
     console.log(currentUser[0].blogs)
-    
+
     let blogsInCurrentUser = currentUser[0].blogs
     console.log(blogsInCurrentUser)
     expect(blogsInCurrentUser.toString()).toContain(createBlogResponse.body.id)
@@ -208,7 +209,7 @@ describe('deleting of a blog', () => {
     usersAtEnd = await helper.usersInDb()
     currentUser = usersAtEnd.filter(user => user.username = response.body.username)
     console.log(usersAtEnd)
-    
+
     blogsInCurrentUser = currentUser[0].blogs
     console.log(blogsInCurrentUser)
     expect
@@ -218,21 +219,61 @@ describe('deleting of a blog', () => {
   test('failed with code 400 if id is valid and not exist', async () => {
     const validId = '5a422aa71b54a676234d17f9'
 
+    const usersAtStart = await helper.usersInDb()
+    console.log(usersAtStart)
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+    const loginResponse = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const newBlog = {
+      title: 'Example blog',
+      author: 'Gary Crosby',
+      url: 'www.example.com',
+      likes: 10,
+    }
+
     await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const deleteResponse = await api
       .delete(`/api/blogs/${validId}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .expect(400)
+      .expect('Content-Type', /application\/json/)
 
-    const blogsAtEnd = await helper.blogsInDb()
-
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    expect(deleteResponse.body.error).toContain('info already deleted from server')
   })
 
   test('failed with status code 400 if id is invalid', async () => {
     const invalidId = '234234sdfsdf'
 
+    const user = {
+      username: 'root',
+      password: 'secret'
+    }
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     await api
       .delete(`/api/blogs/${invalidId}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .expect(400)
+      .expect('Content-Type', /application\/json/)
+
   })
 })
 
