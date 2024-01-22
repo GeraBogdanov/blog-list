@@ -149,8 +149,6 @@ describe('addititon of a new blog', () => {
 
 describe('deleting of a blog', () => {
   beforeEach(async () => {
-    await User.deleteMany({})
-    await Blog.deleteMany({})
 
     const passwordHash = await bcrypt.hash('secret', 10)
     const user = new User({ username: 'root', passwordHash })
@@ -184,10 +182,8 @@ describe('deleting of a blog', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const blogsAtStart = await helper.blogsInDb()
-
     let usersAtEnd = await helper.usersInDb()
-    let currentUser = usersAtEnd.filter(user => user.username = response.body.username)
+    let currentUser = usersAtEnd.filter(user => user.username === response.body.username)
     console.log(usersAtEnd)
     console.log(currentUser[0].blogs)
 
@@ -212,7 +208,6 @@ describe('deleting of a blog', () => {
 
     blogsInCurrentUser = currentUser[0].blogs
     console.log(blogsInCurrentUser)
-    expect
     expect(blogsInCurrentUser).toHaveLength(0)
   })
 
