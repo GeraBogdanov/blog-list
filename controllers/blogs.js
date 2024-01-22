@@ -77,7 +77,7 @@ blogsRouter.patch('/:id', async (request, response) => {
     blog,
     { new: true, runValidators: true }
   )
-  response.status(201).json(result)
+  response.status(201).json(await result.populate('user', { username: 1, name: 1 }))
 })
 
 module.exports = blogsRouter
